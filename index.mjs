@@ -6,6 +6,7 @@
 /**
  * Environment hosts
  * @typedef {Object<string,string>} EnvHosts Environment hosts
+ * @see https://vercel.com/docs/concepts/projects/environment-variables#system-environment-variables
  */
 
 /**
@@ -18,7 +19,7 @@ export const getHost = (hosts = {}, headers = {}) => hosts[process?.env?.VERCEL_
 
 /**
  * Webhook setup handler
- * @param {TeleBot} bot
+ * @param {TeleBot} bot TeleBot instance
  * @param {String} [path] Path to function
  * @param {EnvHosts} [hosts] Environment hosts
  * @param {Object} [headers] Request HTTP headers
