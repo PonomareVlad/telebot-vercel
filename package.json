@@ -1,0 +1,20 @@
+{
+  "name": "telebot-vercel",
+  "version": "0.0.1",
+  "description": "TeleBot bootstrap for Vercel",
+  "main": "index.mjs",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/PonomareVlad/telebot-vercel.git"
+  },
+  "keywords": [
+    "TeleBot",
+    "Vercel"
+  ],
+  "author": "PonomareVlad",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/PonomareVlad/telebot-vercel/issues"
+  },
+  "homepage": "https://github.com/PonomareVlad/telebot-vercel#readme"
+}
