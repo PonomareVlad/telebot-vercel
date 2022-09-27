@@ -34,7 +34,7 @@ export const setWebhookHandler = async (bot = {}, path = '', hosts, {headers} = 
  * @param {TeleBot} bot TeleBot instance
  * @param {String} [path] Path to function
  * @param {EnvHosts} [hosts] Environment hosts
- * @return {Function: setWebhookHandler} Webhook setup handler
+ * @return {Function} Webhook setup handler
  */
 export const setWebhook = (bot, path, hosts) => setWebhookHandler.bind(this, bot, path, hosts)
 
@@ -51,6 +51,6 @@ export const startHandler = async (bot = {}, {body = {}} = {}, {json = _ => _} =
 /**
  * Webhook handler factory
  * @param {TeleBot} bot TeleBot instance
- * @return {Function: startHandler} Webhook handler
+ * @return {Function} Webhook handler
  */
 export const start = bot => startHandler.bind(this, bot)
