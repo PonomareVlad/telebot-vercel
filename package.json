@@ -9,7 +9,12 @@
   },
   "keywords": [
     "TeleBot",
-    "Vercel"
+    "Vercel",
+    "Telegram",
+    "Bot",
+    "ESM",
+    "Lambda",
+    "Serverless"
   ],
   "author": "PonomareVlad",
   "license": "MIT",
