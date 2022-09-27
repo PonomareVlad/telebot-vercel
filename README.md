@@ -55,4 +55,4 @@ import "telebot/plugins/regExpMessage.js"
 }
 ```
 
-# [Complete usage example](https://github.com/PonomareVlad/TeleVercelBot)
+### [Complete usage example](https://github.com/PonomareVlad/TeleVercelBot)
