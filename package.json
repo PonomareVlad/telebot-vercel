@@ -3,6 +3,9 @@
   "version": "0.0.4",
   "description": "TeleBot bootstrap for Vercel",
   "main": "index.mjs",
+  "engines": {
+    "node": "^18.0.0"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/PonomareVlad/telebot-vercel.git"
