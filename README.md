@@ -31,7 +31,7 @@ const bot = new TeleBot(/* TELEGRAM_BOT_TOKEN */)
 
 const path = 'api/webhook.mjs' // Receiver function path
 
-export default setWebhook(bot, path) // Instead of bot.setWebhook()
+export default setWebhook({bot, path}) // Instead of bot.setWebhook()
 ```
 
 If you use plugins (including built-in ones), then you need to import them manually:
