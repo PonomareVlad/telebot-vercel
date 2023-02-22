@@ -91,6 +91,13 @@ export const setWebhook = ({
  */
 export const startHandler = async (bot = {}, {body = {}} = {}, {json = _ => _} = {}) => {
     let response = {status: false};
+    if (isEdgeRuntime && body) {
+        const chunks = [];
+        const utf8decoder = new TextDecoder();
+        for await (const chunk of body)
+            chunks.push(utf8decoder.decode(chunk));
+        body = JSON.parse(chunks.join(''));
+    }
     if (body?.update_id) response = await bot?.receiveUpdates([body]);
     if (isEdgeRuntime) return new Response(JSON.stringify(response));
     return json(response);
