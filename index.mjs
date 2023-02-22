@@ -49,8 +49,8 @@ export const setWebhookHandler = async ({
                                             allowedUpdates,
                                             maxConnections = 100
                                         }, {headers} = {}, {json = _ => _} = {}) => {
-    const url = new URL(path, `https://${getHost({hosts, headers})}`);
-    const response = await bot?.setWebhook(url, certificate, allowedUpdates, maxConnections);
+    const {href} = new URL(path, `https://${getHost({hosts, headers})}`);
+    const response = await bot?.setWebhook(href, certificate, allowedUpdates, maxConnections);
     if (isEdgeRuntime) return new Response(JSON.stringify(response));
     return json(response);
 }
