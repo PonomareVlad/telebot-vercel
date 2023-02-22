@@ -9,6 +9,8 @@
  * @see https://vercel.com/docs/concepts/projects/environment-variables#system-environment-variables
  */
 
+const isEdgeRuntime = typeof EdgeRuntime === 'string';
+
 /**
  * Getting the target host
  * @param {EnvHosts} [hosts] Environment hosts
@@ -22,7 +24,6 @@ export const getHost = ({
                             header = 'x-forwarded-host'
                         } = {}) => {
     const environment = process?.env?.VERCEL_ENV;
-    const isEdgeRuntime = typeof EdgeRuntime === 'string';
     if (hosts?.[environment]) return hosts?.[environment];
     if (isEdgeRuntime) return headers?.get(header);
     return headers?.[header];
@@ -49,7 +50,9 @@ export const setWebhookHandler = async ({
                                             maxConnections = 100
                                         }, {headers} = {}, {json = _ => _} = {}) => {
     const url = new URL(path, `https://${getHost({hosts, headers})}`);
-    return json(await bot?.setWebhook(url, certificate, allowedUpdates, maxConnections).catch(_ => _));
+    const response = await bot?.setWebhook(url, certificate, allowedUpdates, maxConnections);
+    if (isEdgeRuntime) return new Response(JSON.stringify(response));
+    return json(response);
 }
 
 /**
@@ -86,8 +89,12 @@ export const setWebhook = ({
  * @param {Function} [json] Server JSON-response function
  * @returns {Promise} Server response promise
  */
-export const startHandler = async (bot = {}, {body = {}} = {}, {json = _ => _} = {}) =>
-    json(body?.update_id ? await bot?.receiveUpdates([body]) : {status: false});
+export const startHandler = async (bot = {}, {body = {}} = {}, {json = _ => _} = {}) => {
+    let response = {status: false};
+    if (body?.update_id) response = await bot?.receiveUpdates([body]);
+    if (isEdgeRuntime) return new Response(JSON.stringify(response));
+    return json(response);
+}
 
 /**
  * Webhook handler factory
