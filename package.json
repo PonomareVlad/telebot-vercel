@@ -6,6 +6,14 @@
   "engines": {
     "node": "^18.0.0"
   },
+  "peerDependencies": {
+    "telebot": "latest"
+  },
+  "peerDependenciesMeta": {
+    "telebot": {
+      "optional": true
+    }
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/PonomareVlad/telebot-vercel.git"
