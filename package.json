@@ -1,6 +1,6 @@
 {
   "name": "telebot-vercel",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "TeleBot bootstrap for Vercel",
   "main": "index.mjs",
   "engines": {
