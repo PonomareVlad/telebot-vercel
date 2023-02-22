@@ -13,10 +13,20 @@
  * Getting the target host
  * @param {EnvHosts} [hosts] Environment hosts
  * @param {Object} [headers] Request HTTP headers
+ * @param header Name of header with default host
  * @returns {String | undefined | null} Target host
  */
-export const getHost = (hosts = {}, headers = {}) =>
-    hosts[process?.env?.VERCEL_ENV] || headers?.['x-forwarded-host'];
+export const getHost = ({
+                            hosts = {},
+                            headers = {},
+                            header = 'x-forwarded-host'
+                        } = {}) => {
+    const environment = process?.env?.VERCEL_ENV;
+    const isEdgeRuntime = typeof EdgeRuntime === 'string';
+    if (hosts?.[environment]) return hosts?.[environment];
+    if (isEdgeRuntime) return headers?.get(header);
+    return headers?.[header];
+}
 
 /**
  * Webhook setup handler
@@ -31,14 +41,16 @@ export const getHost = (hosts = {}, headers = {}) =>
  * @returns {Promise} Server response promise
  */
 export const setWebhookHandler = async ({
+                                            hosts,
                                             bot = {},
                                             path = '',
-                                            hosts,
                                             certificate,
                                             allowedUpdates,
                                             maxConnections = 100
-                                        }, {headers} = {}, {json = _ => _} = {}) =>
-    json(await bot?.setWebhook(`https://${getHost(hosts, headers)}/${path}`, certificate, allowedUpdates, maxConnections).catch(_ => _))
+                                        }, {headers} = {}, {json = _ => _} = {}) => {
+    const url = new URL(path, `https://${getHost({hosts, headers})}`);
+    return json(await bot?.setWebhook(url, certificate, allowedUpdates, maxConnections).catch(_ => _));
+}
 
 /**
  * Webhook setup handler factory
@@ -50,8 +62,22 @@ export const setWebhookHandler = async ({
  * @param maxConnections
  * @return {Function} Webhook setup handler
  */
-export const setWebhook = ({bot, path, hosts, certificate, allowedUpdates, maxConnections} = {}) =>
-    setWebhookHandler.bind(this, {bot, path, hosts, certificate, allowedUpdates, maxConnections});
+export const setWebhook = ({
+                               bot,
+                               path,
+                               hosts,
+                               certificate,
+                               maxConnections,
+                               allowedUpdates
+                           } = {}) =>
+    setWebhookHandler.bind(this, {
+        allowedUpdates,
+        maxConnections,
+        certificate,
+        hosts,
+        path,
+        bot
+    });
 
 /**
  * Webhook handler
