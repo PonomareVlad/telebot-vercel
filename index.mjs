@@ -9,7 +9,9 @@
  * @see https://vercel.com/docs/concepts/projects/environment-variables#system-environment-variables
  */
 
-const isEdgeRuntime = typeof EdgeRuntime === 'string';
+export const isEdgeRuntime = typeof EdgeRuntime === 'string';
+
+export const jsonResponse = data => isEdgeRuntime ? new Response(JSON.stringify(data)) : data;
 
 /**
  * Getting the target host
@@ -35,6 +37,7 @@ export const getHost = ({
  * @param {String} [path] Path to function
  * @param {EnvHosts} [hosts] Environment hosts
  * @param certificate
+ * @param {boolean} handleErrors Handle and output errors
  * @param allowedUpdates
  * @param maxConnections
  * @param {Object} [headers] Request HTTP headers
@@ -46,13 +49,22 @@ export const setWebhookHandler = async ({
                                             bot = {},
                                             path = '',
                                             certificate,
+                                            handleErrors,
                                             allowedUpdates,
                                             maxConnections = 100
-                                        }, {headers} = {}, {json = _ => _} = {}) => {
-    const {href} = new URL(path, `https://${getHost({hosts, headers})}`);
-    const response = await bot?.setWebhook(href, certificate, allowedUpdates, maxConnections);
-    if (isEdgeRuntime) return new Response(JSON.stringify(response));
-    return json(response);
+                                        } = {}, {
+                                            headers
+                                        } = {}, {
+                                            json = jsonResponse
+                                        } = {}) => {
+    try {
+        const {href} = new URL(path, `https://${getHost({hosts, headers})}`);
+        const response = await bot?.setWebhook(href, certificate, allowedUpdates, maxConnections);
+        return json(response);
+    } catch (e) {
+        if (handleErrors) return json(e);
+        throw e;
+    }
 }
 
 /**
@@ -61,6 +73,7 @@ export const setWebhookHandler = async ({
  * @param {String} [path] Path to function
  * @param {EnvHosts} [hosts] Environment hosts
  * @param certificate
+ * @param {boolean} handleErrors Handle and output errors
  * @param allowedUpdates
  * @param maxConnections
  * @return {Function} Webhook setup handler
@@ -70,12 +83,14 @@ export const setWebhook = ({
                                path,
                                hosts,
                                certificate,
+                               handleErrors,
                                maxConnections,
                                allowedUpdates
                            } = {}) =>
     setWebhookHandler.bind(this, {
         allowedUpdates,
         maxConnections,
+        handleErrors,
         certificate,
         hosts,
         path,
@@ -85,27 +100,40 @@ export const setWebhook = ({
 /**
  * Webhook handler
  * @param {TeleBot} bot TeleBot instance
+ * @param {boolean} handleErrors Handle and output errors
  * @param {Object} [body] Request body
  * @param {Function} [json] Server JSON-response function
  * @returns {Promise} Server response promise
  */
-export const startHandler = async (bot = {}, {body = {}} = {}, {json = _ => _} = {}) => {
-    let response = {status: false};
-    if (isEdgeRuntime && body) {
-        const chunks = [];
-        const utf8decoder = new TextDecoder();
-        for await (const chunk of body)
-            chunks.push(utf8decoder.decode(chunk));
-        body = JSON.parse(chunks.join(''));
+export const startHandler = async ({
+                                       bot = {},
+                                       handleErrors
+                                   } = {}, {
+                                       body = {}
+                                   } = {}, {
+                                       json = jsonResponse
+                                   } = {}) => {
+    try {
+        let response = {status: false};
+        if (isEdgeRuntime && body) {
+            const chunks = [];
+            const utf8decoder = new TextDecoder();
+            for await (const chunk of body)
+                chunks.push(utf8decoder.decode(chunk));
+            body = JSON.parse(chunks.join(''));
+        }
+        if (body?.update_id) response = await bot?.receiveUpdates([body]);
+        return json(response);
+    } catch (e) {
+        if (handleErrors) return json(e);
+        throw e;
     }
-    if (body?.update_id) response = await bot?.receiveUpdates([body]);
-    if (isEdgeRuntime) return new Response(JSON.stringify(response));
-    return json(response);
 }
 
 /**
  * Webhook handler factory
  * @param {TeleBot} bot TeleBot instance
+ * @param {boolean} handleErrors Handle and output errors
  * @return {Function} Webhook handler
  */
-export const start = bot => startHandler.bind(this, bot);
+export const start = ({bot, handleErrors} = {}) => startHandler.bind(this, {bot, handleErrors});

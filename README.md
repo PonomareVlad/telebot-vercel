@@ -4,7 +4,8 @@ A simple bootstrap for [TeleBot](https://github.com/mullwar/telebot) that will h
 your [Telegram](https://telegram.org) bot
 to [Vercel](https://vercel.com)
 
-**This package supports only webhooks !**
+> Both [Serverless](https://vercel.com/docs/concepts/functions/serverless-functions)
+> and [Edge](https://vercel.com/docs/concepts/functions/edge-functions) functions are supported !
 
 ## How to use
 
@@ -18,7 +19,7 @@ const bot = new TeleBot(/* TELEGRAM_BOT_TOKEN */)
 
 bot.on('text', msg => msg.reply.text(msg.text))
 
-export default start(bot) // Instead of bot.start()
+export default start({bot}) // Instead of bot.start()
 ```
 
 Webhook setup function:
@@ -56,3 +57,11 @@ import "telebot/plugins/regExpMessage.js"
 ```
 
 ### [Complete usage example](https://github.com/PonomareVlad/TeleVercelBot)
+
+## You can also use [additional options](/index.mjs):
+
+- Multiple environments
+- Default hostname
+- Error output
+
+Made with 💜 by [Vladislav Ponomarev](https://GitHub.com/PonomareVlad)
