@@ -17,7 +17,7 @@ export const jsonResponse = data => isEdgeRuntime ? new Response(JSON.stringify(
  * Getting the target host
  * @param {EnvHosts} [hosts] Environment hosts
  * @param {Object} [headers] Request HTTP headers
- * @param header Name of header with default host
+ * @param [header] Name of header with default host
  * @returns {String | undefined | null} Target host
  */
 export const getHost = ({
@@ -36,10 +36,10 @@ export const getHost = ({
  * @param {TeleBot} bot TeleBot instance
  * @param {String} [path] Path to function
  * @param {EnvHosts} [hosts] Environment hosts
- * @param certificate
- * @param {boolean} handleErrors Handle and output errors
- * @param allowedUpdates
- * @param maxConnections
+ * @param [certificate]
+ * @param {boolean} [handleErrors] Handle and output errors
+ * @param [allowedUpdates]
+ * @param [maxConnections]
  * @param {Object} [headers] Request HTTP headers
  * @param {Function} [json] Server JSON-response function
  * @returns {Promise} Server response promise
@@ -72,10 +72,10 @@ export const setWebhookHandler = async ({
  * @param {TeleBot} bot TeleBot instance
  * @param {String} [path] Path to function
  * @param {EnvHosts} [hosts] Environment hosts
- * @param certificate
- * @param {boolean} handleErrors Handle and output errors
- * @param allowedUpdates
- * @param maxConnections
+ * @param [certificate]
+ * @param {boolean} [handleErrors] Handle and output errors
+ * @param [allowedUpdates]
+ * @param [maxConnections]
  * @return {Function} Webhook setup handler
  */
 export const setWebhook = ({
@@ -100,7 +100,7 @@ export const setWebhook = ({
 /**
  * Webhook handler
  * @param {TeleBot} bot TeleBot instance
- * @param {boolean} handleErrors Handle and output errors
+ * @param {boolean} [handleErrors] Handle and output errors
  * @param {Object} [body] Request body
  * @param {Function} [json] Server JSON-response function
  * @returns {Promise} Server response promise
@@ -133,7 +133,7 @@ export const startHandler = async ({
 /**
  * Webhook handler factory
  * @param {TeleBot} bot TeleBot instance
- * @param {boolean} handleErrors Handle and output errors
+ * @param {boolean} [handleErrors] Handle and output errors
  * @return {Function} Webhook handler
  */
 export const start = ({bot, handleErrors} = {}) => startHandler.bind(this, {bot, handleErrors});
